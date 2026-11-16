@@ -3,6 +3,8 @@
 // MoodEntry Class
 // ============================================================================
 
+import 'dart:io';
+
 /// Represents a single mood log entry.
 ///
 /// Fields:
@@ -141,42 +143,90 @@ void main() {
   //
   // Skeleton:
   //
-  // bool running = true;
-  // while (running) {
-  //   print('1. Add mood entry');
-  //   print('2. View all entries');
-  //   print('3. View average mood');
-  //   print('4. Filter by minimum score');
-  //   print('5. Quit');
-  //   stdout.write('\nChoose an option: ');
+  bool running = true;
+  while (running) {
+     print('1. Add mood entry');
+     print('2. View all entries');
+     print('3. View average mood');
+     print('4. Filter by minimum score');
+     print('5. Quit');
+     stdout.write('\nChoose an option: ');
   //
-  //   String? input = stdin.readLineSync();
-  //   int? choice = int.tryParse(input ?? '');
+     String? input = stdin.readLineSync();
+     int? choice = int.tryParse(input ?? '');
   //
-  //   switch (choice) {
-  //     case 1:
-  //       // TODO: prompt for score and note (Enter for no note),
-  //       //       call logger.addEntry()
-  //       break;
-  //     case 2:
-  //       // TODO: get all entries, print each one (or "No entries yet.")
-  //       break;
-  //     case 3:
-  //       // TODO: print the average score, or a message when
-  //       //       getAverageScore() returns null
-  //       break;
-  //     case 4:
-  //       // TODO: prompt for threshold, get filtered entries, print them
-  //       break;
-  //     case 5:
-  //       running = false;
-  //       print('Goodbye!');
-  //       break;
-  //     default:
-  //       print('Invalid option. Please choose 1-5.');
-  //   }
-  //   print('');
-  // }
+     switch (choice) {
+       case 1:
+         // TODO: prompt for score and note (Enter for no note),
+         //       call logger.addEntry()
+         stdout.write('Enter mood score from 1-10:');
+         String? scoreInput = stdin.readLineSync();
+         int? score = int.tryParse(scoreInput ?? '');
+
+         if (score == null) {
+          print('Invalid. Entry cancelled');
+          break;
+         }
+         stdout.write('Enter a note (or press Enter for none): ');
+         String? note = stdin.readLineSync();
+         
+         logger.addEntry(score, note);
+         break;
+
+       case 2:
+         // TODO: get all entries, print each one (or "No entries yet.")
+         final entries = logger.getAllEntries();
+         if (entries.isEmpty) {
+          print('No entries yet.');
+         } else {
+          for (final entry in entries) {
+            print(entry);
+          }
+         }
+         break;
+
+       case 3:
+         // TODO: print the average score, or a message when
+         //       getAverageScore() returns null
+         double? avg = logger.getAverageScore();
+         if (avg == null) {
+          print('No entries yet.');
+         } else {
+          print('Average mood score: ${avg.toStringAsFixed(1)}');
+         }
+         break;
+
+       case 4:
+         // TODO: prompt for threshold, get filtered entries, print them
+         stdout.write('Enter minimum score threshold from 1-10: ');
+         String? threshInput = stdin.readLineSync();
+         int? threshold = int.tryParse(threshInput ?? '');
+         
+         if (threshold == null) {
+          print('Invalid threshold.');
+          break;
+        }
+        
+        final filtered = logger.getEntriesAbove(threshold);
+        
+        if (filtered.isEmpty) {
+          print('No entries found with score >= $threshold.');
+        } else {
+          for (final entry in filtered) {
+            print(entry);
+          }
+        }
+         break;
+
+       case 5:
+         running = false;
+         print('Goodbye!');
+         break;
+       default:
+         print('Invalid option. Please choose 1-5.');
+     }
+     print('');
+   }
 
   print('(Implement the interactive menu above)');
 }

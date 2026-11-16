@@ -56,6 +56,7 @@ class MoodEntry {
 class MoodLogger {
   // TODO: declare a private list to store MoodEntry objects
   // Hint: final List<MoodEntry> _entries = [];
+  final List<MoodEntry> _entries = [];
 
   /// Adds a new mood entry with the given score and optional note.
   ///
@@ -65,13 +66,26 @@ class MoodLogger {
   void addEntry(int score, String? note) {
     // TODO: validate score (1-10), trim the note (null if empty),
     //       create MoodEntry, add to list
+    if (score < 1 || score > 10) {
+      print("Error. Score must be between 1 and 10.");
+      return;
+    }
+
+    String? emptyNote;
+    if (note != null && note.trim().isNotEmpty) {
+      emptyNote = note.trim();
+    }
+
+    final entry = MoodEntry(score, emptyNote);
+    _entries.add(entry);
+    print("Added entry");
   }
 
   /// Returns a copy of all entries.
   List<MoodEntry> getAllEntries() {
     // TODO: return a copy of the entries list
     // Hint: return List.from(_entries);
-    return [];
+    return List.from(_entries);
   }
 
   /// Calculates and returns the average mood score.
@@ -82,19 +96,24 @@ class MoodLogger {
     // TODO: implement
     // Hint: return null for an empty list; otherwise use fold() to sum
     //       the scores, then divide by length
-    return null;
+    if (_entries.isEmpty) {
+      return null;
+    }
+
+    int sum = _entries.fold(0, (total, entry) => total + entry.score);
+    return sum / _entries.length;
   }
 
   /// Returns all entries with a score greater than or equal to [threshold].
   List<MoodEntry> getEntriesAbove(int threshold) {
     // TODO: implement using .where()
-    return [];
+    return _entries.where((entry) => entry.score >= threshold).toList();
   }
 
   /// Returns the total number of entries.
   int get entryCount {
     // TODO: implement
-    return 0;
+    return _entries.length;
   }
 }
 
